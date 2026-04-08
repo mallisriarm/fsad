@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Management System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4e73df;
+            color: white;
+        }
+
+        .highlight {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Order Management System</h2>
+
+<div class="container">
+
+    <!-- Customers -->
+    <div class="card">
+        <h3>Customers</h3>
+        <table id="customersTable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Products -->
+    <div class="card">
+        <h3>Products</h3>
+        <table id="productsTable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Orders (JOIN Result) -->
+    <div class="card">
+        <h3>Customer Order History (JOIN)</h3>
+        <table id="ordersTable">
+            <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Amount</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Analysis -->
+    <div class="card">
+        <h3>Analysis (Subqueries)</h3>
+        <p id="highestOrder"></p>
+        <p id="mostActive"></p>
+    </div>
+
+</div>
+
+<script>
+    // Customers Table
+    const customers = [
+        { id: 1, name: "Ganga" },
+        { id: 2, name: "Ravi" },
+        { id: 3, name: "Priya" }
+    ];
+
+    // Products Table
+    const products = [
+        { id: 1, name: "Laptop", price: 50000 },
+        { id: 2, name: "Mobile", price: 20000 },
+        { id: 3, name: "Headphones", price: 3000 }
+    ];
+
+    // Orders Table
+    const orders = [
+        { customer_id: 1, product_id: 1 },
+        { customer_id: 1, product_id: 3 },
+        { customer_id: 2, product_id: 2 },
+        { customer_id: 3, product_id: 2 },
+        { customer_id: 3, product_id: 1 }
+    ];
+
+    // Display Customers
+    customers.forEach(c => {
+        document.getElementById("customersTable").innerHTML +=
+            `<tr><td>${c.id}</td><td>${c.name}</td></tr>`;
+    });
+
+    // Display Products
+    products.forEach(p => {
+        document.getElementById("productsTable").innerHTML +=
+            `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.price}</td></tr>`;
+    });
+
+    // JOIN Logic (Customer + Product)
+    let highestValue = 0;
+    let highestOrderText = "";
+
+    let orderCount = {};
+
+    orders.forEach(o => {
+        let customer = customers.find(c => c.id === o.customer_id);
+        let product = products.find(p => p.id === o.product_id);
+
+        document.getElementById("ordersTable").innerHTML +=
+            `<tr>
+                <td>${customer.name}</td>
+                <td>${product.name}</td>
+                <td>${product.price}</td>
+            </tr>`;
+
+        // Highest value order
+        if (product.price > highestValue) {
+            highestValue = product.price;
+            highestOrderText = `${customer.name} ordered ${product.name} (₹${product.price})`;
+        }
+
+        // Count orders per customer
+        orderCount[customer.name] = (orderCount[customer.name] || 0) + 1;
+    });
+
+    // Most Active Customer
+    let mostActiveCustomer = "";
+    let maxOrders = 0;
+
+    for (let name in orderCount) {
+        if (orderCount[name] > maxOrders) {
+            maxOrders = orderCount[name];
+            mostActiveCustomer = name;
+        }
+    }
+
+    document.getElementById("highestOrder").innerHTML =
+        `<span class="highlight">Highest Value Order:</span> ${highestOrderText}`;
+
+    document.getElementById("mostActive").innerHTML =
+        `<span class="highlight">Most Active Customer:</span> ${mostActiveCustomer} (${maxOrders} orders)`;
+</script>
+
+</body>
+</html>

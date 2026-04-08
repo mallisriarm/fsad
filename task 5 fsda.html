@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Transaction</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2e59d9;
+        }
+
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Payment Section -->
+    <div id="paymentSection">
+        <h2>Online Payment</h2>
+        <p>User Balance: ₹ <span id="userBalance">5000</span></p>
+        <p>Merchant Balance: ₹ <span id="merchantBalance">2000</span></p>
+
+        <input type="number" id="amount" placeholder="Enter Amount">
+        <button onclick="processPayment()">Pay Now</button>
+
+        <p id="message"></p>
+    </div>
+
+    <!-- Success Page -->
+    <div id="successSection" class="hidden">
+        <h2>🎉 Payment Successful</h2>
+        <p>Transaction Completed (COMMIT)</p>
+        <button onclick="goBack()">Back to Payment</button>
+    </div>
+
+</div>
+
+<script>
+    let userBalance = 5000;
+    let merchantBalance = 2000;
+
+    function processPayment() {
+
+        let amount = parseInt(document.getElementById("amount").value);
+        let message = document.getElementById("message");
+
+        if (!amount || amount <= 0) {
+            message.innerHTML = "Enter valid amount!";
+            message.className = "error";
+            return;
+        }
+
+        let tempUser = userBalance;
+        let tempMerchant = merchantBalance;
+
+        if (tempUser >= amount) {
+
+            // Deduct & Add
+            tempUser -= amount;
+            tempMerchant += amount;
+
+            // COMMIT
+            userBalance = tempUser;
+            merchantBalance = tempMerchant;
+
+            document.getElementById("userBalance").innerText = userBalance;
+            document.getElementById("merchantBalance").innerText = merchantBalance;
+
+            // Redirect to Success Page (Same HTML)
+            document.getElementById("paymentSection").classList.add("hidden");
+            document.getElementById("successSection").classList.remove("hidden");
+
+        } else {
+
+            // ROLLBACK
+            message.innerHTML = "Transaction Failed! Insufficient Balance (ROLLBACK)";
+            message.className = "error";
+        }
+
+        document.getElementById("amount").value = "";
+    }
+
+    function goBack() {
+        document.getElementById("successSection").classList.add("hidden");
+        document.getElementById("paymentSection").classList.remove("hidden");
+        document.getElementById("message").innerHTML = "";
+    }
+</script>
+
+</body>
+</html>

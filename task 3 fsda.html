@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #4e73df, #1cc88a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #2e59d9;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: red;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Login Section -->
+    <div id="loginSection">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Enter Username">
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="login()">Login</button>
+        <div id="message" class="message"></div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="hidden">
+        <h2>Login Successful 🎉</h2>
+        <p>Welcome to Dashboard</p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+</div>
+
+<script>
+    const users = [
+        { username: "admin", password: "admin123" },
+        { username: "user1", password: "user123" }
+    ];
+
+    function login() {
+        let username = document.getElementById("username").value.trim();
+        let password = document.getElementById("password").value.trim();
+        let message = document.getElementById("message");
+
+        if (username === "" || password === "") {
+            message.innerHTML = "All fields are required!";
+            return;
+        }
+
+        if (password.length < 6) {
+            message.innerHTML = "Password must be at least 6 characters!";
+            return;
+        }
+
+        let userFound = users.find(user =>
+            user.username === username && user.password === password
+        );
+
+        if (userFound) {
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("dashboardSection").classList.remove("hidden");
+        } else {
+            message.innerHTML = "Invalid Username or Password!";
+        }
+    }
+
+    function logout() {
+        document.getElementById("dashboardSection").classList.add("hidden");
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("message").innerHTML = "";
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+    }
+</script>
+
+</body>
+</html>
